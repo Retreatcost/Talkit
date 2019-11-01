@@ -1,26 +1,21 @@
+/*jshint esversion: 6, browser:true, node:true, jquery:true, unused: true, eqeqeq: true, elision:true*/
 function getURLParameter(name) {
-    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [, ""])[1].replace(/\+/g, '%20')) || null
+    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [, ""])[1].replace(/\+/g, '%20')) || null;
 }
 
-function onError(e) {
-    console.log('Error', e);
-}
+let fs = null;
+let loadOnStart = getURLParameter('load');
 
-var fs = null;
-var loadOnStart = getURLParameter('load');
-var importOnStart = getURLParameter('import');
-
-addEventListener('app-ready', function(e)
-{
+addEventListener('app-ready', () => {
 	fs = require('fs');
 	$('#import').hide();
 	$('#export').hide();
 	$('#export-game').hide();
 });
 
-var graph = new joint.dia.Graph();
+let graph = new joint.dia.Graph();
 
-var defaultLink = new joint.dia.Link(
+let defaultLink = new joint.dia.Link(
 {
 	attrs:
 	{
@@ -32,7 +27,7 @@ var defaultLink = new joint.dia.Link(
 
 defaultLink.set('smooth', true);
 
-var allowableConnections =
+let allowableConnections =
 [
 	['dialogue.Text', 'dialogue.Text'],
 	['dialogue.Text', 'dialogue.Node'],
@@ -80,26 +75,26 @@ var allowableConnections =
 	['dialogue.Trigger', 'dialogue.Blocker'],
 ];
 
-function validateConnection(cellViewS, magnetS, cellViewT, magnetT, end, linkView)
+function validateConnection(cellViewS, magnetS, cellViewT, magnetT)
 {
 	// Prevent loop linking
-	if (magnetS == magnetT)
+	if (magnetS === magnetT)
 		return false;
 
-	if (cellViewS == cellViewT)
+	if (cellViewS === cellViewT)
 		return false;
 	
 	// Can't connect to an output port
 	if (magnetT.attributes.magnet.nodeValue !== 'passive') 
 		return false;
 
-	var sourceType = cellViewS.model.attributes.type;
-	var targetType = cellViewT.model.attributes.type;
-	var valid = false;
-	for (var i = 0; i < allowableConnections.length; i++)
+	let sourceType = cellViewS.model.attributes.type;
+	let targetType = cellViewT.model.attributes.type;
+	let valid = false;
+	for (let i = 0; i < allowableConnections.length; i++)
 	{
-		var rule = allowableConnections[i];
-		if (sourceType == rule[0] && targetType == rule[1])
+		let rule = allowableConnections[i];
+		if (sourceType === rule[0] && targetType === rule[1])
 		{
 			valid = true;
 			break;
@@ -118,17 +113,17 @@ function validateMagnet(cellView, magnet)
 
 	// If unlimited connections attribute is null, we can only ever connect to one object
 	// If it is not null, it is an array of type strings which are allowed to have unlimited connections
-	var unlimitedConnections = magnet.getAttribute('unlimitedConnections');
-	var links = graph.getConnectedLinks(cellView.model);
-	for (var i = 0; i < links.length; i++)
+	let unlimitedConnections = magnet.getAttribute('unlimitedConnections');
+	let links = graph.getConnectedLinks(cellView.model);
+	for (let i = 0; i < links.length; i++)
 	{
-		var link = links[i];
+		let link = links[i];
 		if (link.attributes.source.id === cellView.model.id && link.attributes.source.port === magnet.attributes.port.nodeValue)
 		{
 			// This port already has a connection
 			if (unlimitedConnections && link.attributes.target.id)
 			{
-				var targetCell = graph.getCell(link.attributes.target.id);
+				let targetCell = graph.getCell(link.attributes.target.id);
 				if (unlimitedConnections.indexOf(targetCell.attributes.type) !== -1)
 					// It's okay because this target type has unlimited connections
 					return true; 
@@ -225,31 +220,31 @@ joint.shapes.dialogue.BaseView = joint.shapes.devs.ModelView.extend(
 	updateBox: function()
 	{
 		// Set the position and dimension of the box so that it covers the JointJS element.
-	    var bbox = this.model.getBBox();
+	    let bbox = this.model.getBBox();
        
 		// Example of updating the HTML with a data stored in the cell model.
-		var nameField = this.$box.find('input.name');
+		let nameField = this.$box.find('input.name');
 		if (!nameField.is(':focus'))
 		    nameField.val(this.model.get('name'));
 
 	    // Example of updating the HTML with a data stored in the cell model.
-		var actorField = this.$box.find('input.actor');
+		let actorField = this.$box.find('input.actor');
 		if (!actorField.is(':focus'))
 		    actorField.val(this.model.get('actor'));
 
 	    // Example of updating the HTML with a data stored in the cell model.
-		var textAreaField = this.$box.find('textarea.name');
+		let textAreaField = this.$box.find('textarea.name');
 		if (!textAreaField.is(':focus'))
 		    textAreaField.val(this.model.get('name'));
 
-		var label = this.$box.find('.label');
-		var type = this.model.get('type').slice('dialogue.'.length);
+		let label = this.$box.find('.label');
+		let type = this.model.get('type').slice('dialogue.'.length);
 		label.text(type);
 		label.attr('class', 'label ' + type);
 		this.$box.css({ width: bbox.width, height: bbox.height, left: bbox.x, top: bbox.y, transform: 'rotate(' + (this.model.get('angle') || 0) + 'deg)' });
 	},
 
-	removeBox: function(evt)
+	removeBox: function()
 	{
 		this.$box.remove();
 	},
@@ -319,26 +314,26 @@ joint.shapes.dialogue.BlockerView = joint.shapes.devs.ModelView.extend(
 	updateBox: function()
 	{
 		// Set the position and dimension of the box so that it covers the JointJS element.
-		var bbox = this.model.getBBox();
+		let bbox = this.model.getBBox();
 		
 		// Example of updating the HTML with a data stored in the cell model.
-		var questField = this.$box.find('input.quest');
+		let questField = this.$box.find('input.quest');
 		if (!questField.is(':focus'))
 			questField.val(this.model.get('quest'));
 
 		// Example of updating the HTML with a data stored in the cell model.
-		var conditionField = this.$box.find('textarea.condition');
+		let conditionField = this.$box.find('textarea.condition');
 		if (!conditionField.is(':focus'))
 			conditionField.val(this.model.get('condition'));
 
-		var label = this.$box.find('.label');
-		var type = this.model.get('type').slice('dialogue.'.length);
+		let label = this.$box.find('.label');
+		let type = this.model.get('type').slice('dialogue.'.length);
 		label.text(type);
 		label.attr('class', 'label ' + type);
 		this.$box.css({ width: bbox.width, height: bbox.height, left: bbox.x, top: bbox.y, transform: 'rotate(' + (this.model.get('angle') || 0) + 'deg)' });
 	},
 
-	removeBox: function(evt)
+	removeBox: function()
 	{
 		this.$box.remove();
 	},
@@ -402,31 +397,31 @@ joint.shapes.dialogue.TriggerView = joint.shapes.devs.ModelView.extend(
 	updateBox: function()
 	{
 		// Set the position and dimension of the box so that it covers the JointJS element.
-		var bbox = this.model.getBBox();
+		let bbox = this.model.getBBox();
 		
 		// Example of updating the HTML with a data stored in the cell model.
-		var nameField = this.$box.find('input.trigger');
+		let nameField = this.$box.find('input.trigger');
 		if (!nameField.is(':focus'))
 			nameField.val(this.model.get('trigger'));
 
 		// Example of updating the HTML with a data stored in the cell model.
-		var actorField = this.$box.find('input.dataset');
+		let actorField = this.$box.find('input.dataset');
 		if (!actorField.is(':focus'))
 			actorField.val(this.model.get('dataset'));
 
 		// Example of updating the HTML with a data stored in the cell model.
-		var textAreaField = this.$box.find('textarea.dataset');
+		let textAreaField = this.$box.find('textarea.dataset');
 		if (!textAreaField.is(':focus'))
 			textAreaField.val(this.model.get('dataset'));
 
-		var label = this.$box.find('.label');
-		var type = this.model.get('type').slice('dialogue.'.length);
+		let label = this.$box.find('.label');
+		let type = this.model.get('type').slice('dialogue.'.length);
 		label.text(type);
 		label.attr('class', 'label ' + type);
 		this.$box.css({ width: bbox.width, height: bbox.height, left: bbox.x, top: bbox.y, transform: 'rotate(' + (this.model.get('angle') || 0) + 'deg)' });
 	},
 
-	removeBox: function(evt)
+	removeBox: function()
 	{
 		this.$box.remove();
 	},
@@ -486,20 +481,20 @@ joint.shapes.dialogue.ChoiceView = joint.shapes.devs.ModelView.extend(
 
     updateBox: function () {
         // Set the position and dimension of the box so that it covers the JointJS element.
-        var bbox = this.model.getBBox();
+        let bbox = this.model.getBBox();
         // Example of updating the HTML with a data stored in the cell model.
-        var nameField = this.$box.find('textarea.name');
+        let nameField = this.$box.find('textarea.name');
         if (!nameField.is(':focus'))
             nameField.val(this.model.get('name'));
 
         // Example of updating the HTML with a data stored in the cell model.
-        var nameField = this.$box.find('input.title');
-        if (!nameField.is(':focus'))
-            nameField.val(this.model.get('title'));
+        let titleField = this.$box.find('input.title');
+        if (!titleField.is(':focus'))
+			titleField.val(this.model.get('title'));
 
 
-        var label = this.$box.find('.label');
-        var type = this.model.get('type').slice('dialogue.'.length);
+        let label = this.$box.find('.label');
+        let type = this.model.get('type').slice('dialogue.'.length);
         label.text(type);
         label.attr('class', 'label ' + type);
 
@@ -507,7 +502,7 @@ joint.shapes.dialogue.ChoiceView = joint.shapes.devs.ModelView.extend(
         this.$box.css({ width: bbox.width, height: bbox.height, left: bbox.x, top: bbox.y, transform: 'rotate(' + (this.model.get('angle') || 0) + 'deg)' });
     },
 
-    removeBox: function (evt) {
+    removeBox: function () {
         this.$box.remove();
     },
 });
@@ -649,10 +644,10 @@ joint.shapes.dialogue.BranchView = joint.shapes.dialogue.BaseView.extend(
 	{
 		if (this.model.get('outPorts').length > 1)
 		{
-			var outPorts = this.model.get('outPorts').slice(0);
+			let outPorts = this.model.get('outPorts').slice(0);
 			outPorts.pop();
 			this.model.set('outPorts', outPorts);
-			var values = this.model.get('values').slice(0);
+			let values = this.model.get('values').slice(0);
 			values.pop();
 			this.model.set('values', values);
 			this.updateSize();
@@ -661,10 +656,10 @@ joint.shapes.dialogue.BranchView = joint.shapes.dialogue.BaseView.extend(
 
 	addPort: function()
 	{
-		var outPorts = this.model.get('outPorts').slice(0);
+		let outPorts = this.model.get('outPorts').slice(0);
 		outPorts.push('output' + outPorts.length.toString());
 		this.model.set('outPorts', outPorts);
-		var values = this.model.get('values').slice(0);
+		let values = this.model.get('values').slice(0);
 		values.push(null);
 		this.model.set('values', values);
 		this.updateSize();
@@ -673,14 +668,14 @@ joint.shapes.dialogue.BranchView = joint.shapes.dialogue.BaseView.extend(
 	updateBox: function()
 	{
 		joint.shapes.dialogue.BaseView.prototype.updateBox.apply(this, arguments);
-		var values = this.model.get('values');
-		var valueFields = this.$box.find('input.value');
+		let values = this.model.get('values');
+		let valueFields = this.$box.find('input.value');
 
 		// Add value fields if necessary
-		for (var i = valueFields.length; i < values.length; i++)
+		for (let i = valueFields.length; i < values.length; i++)
 		{
 			// Prevent paper from handling pointerdown.
-			var field = $('<input type="text" class="value" />');
+			let field = $('<input type="text" class="value" />');
 			field.attr('placeholder', 'Value ' + (i + 1).toString());
 			field.attr('index', i);
 			this.$box.append(field);
@@ -689,21 +684,21 @@ joint.shapes.dialogue.BranchView = joint.shapes.dialogue.BaseView.extend(
 			// This is an example of reacting on the input change and storing the input data in the cell model.
 			field.on('change', _.bind(function(evt)
 			{
-				var values = this.model.get('values').slice(0);
+				let values = this.model.get('values').slice(0);
 				values[$(evt.target).attr('index')] = $(evt.target).val();
 				this.model.set('values', values);
 			}, this));
 		}
 
 		// Remove value fields if necessary
-		for (var i = values.length; i < valueFields.length; i++)
+		for (let i = values.length; i < valueFields.length; i++)
 			$(valueFields[i]).remove();
 
 		// Update value fields
 		valueFields = this.$box.find('input.value');
-		for (var i = 0; i < valueFields.length; i++)
+		for (let i = 0; i < valueFields.length; i++)
 		{
-			var field = $(valueFields[i]);
+			let field = $(valueFields[i]);
 			if (!field.is(':focus'))
 				field.val(values[i]);
 		}
@@ -711,8 +706,8 @@ joint.shapes.dialogue.BranchView = joint.shapes.dialogue.BaseView.extend(
 
 	updateSize: function()
 	{
-		var textField = this.$box.find('input.name');
-		var height = textField.outerHeight(true);
+		let textField = this.$box.find('input.name');
+		let height = textField.outerHeight(true);
 		this.model.set('size', { width: 200, height: 100 + Math.max(0, (this.model.get('outPorts').length - 1) * height) });
 	},
 });
@@ -756,7 +751,7 @@ joint.shapes.dialogue.SetView = joint.shapes.dialogue.BaseView.extend(
 	updateBox: function()
 	{
 		joint.shapes.dialogue.BaseView.prototype.updateBox.apply(this, arguments);
-		var field = this.$box.find('input.value');
+		let field = this.$box.find('input.value');
 		if (!field.is(':focus'))
 			field.val(this.model.get('value'));
 	},
@@ -764,33 +759,33 @@ joint.shapes.dialogue.SetView = joint.shapes.dialogue.BaseView.extend(
 
 function gameData()
 {
-	var cells = graph.toJSON().cells;
-	var nodesByID = {};
-	var cellsByID = {};
-	var nodes = [];
-	for (var i = 0; i < cells.length; i++)
+	let cells = graph.toJSON().cells;
+	let nodesByID = {};
+	let cellsByID = {};
+	let nodes = [];
+	for (let i = 0; i < cells.length; i++)
 	{
-		var cell = cells[i];
-		if (cell.type != 'link')
+		let cell = cells[i];
+		if (cell.type !== 'link')
 		{
-			var node =
+			let node =
 			{
 				type: cell.type.slice('dialogue.'.length),
 				id: cell.id,
 				actor: cell.actor,
                 title: cell.title,
 			};
-			if (node.type == 'Branch')
+			if (node.type === 'Branch')
 			{
 				node.variable = cell.name;
 				node.branches = {};
-				for (var j = 0; j < cell.values.length; j++)
+				for (let j = 0; j < cell.values.length; j++)
 				{
-					var branch = cell.values[j];
+					let branch = cell.values[j];
 					node.branches[branch] = null;
 				}
 			}
-			else if (node.type == 'Set')
+			else if (node.type === 'Set')
 			{
 				node.variable = cell.name;
 				node.value = cell.value;
@@ -798,21 +793,21 @@ function gameData()
                 
 			}
 
-			else if (node.type == 'Blocker')
+			else if (node.type === 'Blocker')
 			{
 				node.quest = cell.quest;
 				node.condition = cell.condition;
 				node.next = null;                
 			}
 
-			else if (node.type == 'Trigger')
+			else if (node.type === 'Trigger')
 			{
 				node.trigger = cell.trigger;
 				node.dataset = cell.dataset;
 				node.next = null;                
 			}
 
-			else if (node.type == 'Choice') {
+			else if (node.type === 'Choice') {
 			    node.name = cell.name;
 			    node.title = cell.title;
 			    node.next = null;
@@ -829,29 +824,29 @@ function gameData()
 			cellsByID[cell.id] = cell;
 		}
 	}
-	for (var i = 0; i < cells.length; i++)
+	for (let i = 0; i < cells.length; i++)
 	{
-		var cell = cells[i];
-		if (cell.type == 'link')
+		let cell = cells[i];
+		if (cell.type === 'link')
 		{
-			var source = nodesByID[cell.source.id];
-			var target = cell.target ? nodesByID[cell.target.id] : null;
+			let source = nodesByID[cell.source.id];
+			let target = cell.target ? nodesByID[cell.target.id] : null;
 			if (source)
 			{
-				if (source.type == 'Branch')
+				if (source.type === 'Branch')
 				{
-					var portNumber = parseInt(cell.source.port.slice('output'.length));
-					var value;
-					if (portNumber == 0)
+					let portNumber = parseInt(cell.source.port.slice('output'.length));
+					let value;
+					if (portNumber === 0)
 						value = '_default';
 					else
 					{
-						var sourceCell = cellsByID[source.id];
+						let sourceCell = cellsByID[source.id];
 						value = sourceCell.values[portNumber - 1];
 					}
 					source.branches[value] = target ? target.id : null;
 				}
-				else if ((source.type == 'Text' || source.type == 'Node') && target && target.type == 'Choice')
+				else if ((source.type === 'Text' || source.type === 'Node') && target && target.type === 'Choice')
 				{
 					if (!source.choices)
 					{
@@ -869,12 +864,12 @@ function gameData()
 }
 
 
-var filename = null;
-var defaultFilename = 'dialogue.json';
+let filename = null;
+let defaultFilename = 'dialogue.json';
 
 function flash(text)
 {
-	var $flash = $('#flash');
+	let $flash = $('#flash');
 	$flash.text(text);
 	$flash.stop(true, true);
 	$flash.show();
@@ -884,7 +879,7 @@ function flash(text)
 
 function offerDownload(name, data)
 {
-	var a = $('<a>');
+	let a = $('<a>');
 	a.attr('download', name);
 	a.attr('href', 'data:application/json,' + encodeURIComponent(JSON.stringify(data)));
 	a.attr('target', '_blank');
@@ -904,7 +899,7 @@ function promptFilename(callback)
 			type: 'save',
 		}, function(err, files)
 		{
-			if (!err && files.length == 1)
+			if (!err && files.length === 1)
 			{
 				filename = files[0];
 				callback(filename);
@@ -959,7 +954,7 @@ function load()
 		    type: 'open',
 		    multiSelect: false,
 		}, function (err, files) {
-		    if (!err && files.length == 1) {
+		    if (!err && files.length === 1) {
 		        graph.clear();
 		        filename = files[0];
 		        graph.fromJSON(JSON.parse(fs.readFileSync(filename, 'utf8')));
@@ -1006,9 +1001,9 @@ function add(constructor)
 {
 	return function()
 	{
-		var position = $('#cmroot').position();
-		var container = $('#container')[0];
-		var element = new constructor(
+		let position = $('#cmroot').position();
+		let container = $('#container')[0];
+		let element = new constructor(
 		{
 			position: { x: position.left + container.scrollLeft, y: position.top + container.scrollTop },
 		});
@@ -1022,7 +1017,7 @@ function clear()
 	filename = null;
 }
 
-var paper = new joint.dia.Paper(
+let paper = new joint.dia.Paper(
 {
 	el: $('#paper'),
 	width: 16000,
@@ -1036,9 +1031,9 @@ var paper = new joint.dia.Paper(
 
 });
 
-var panning = false;
-var mousePosition = { x: 0, y: 0 };
-paper.on('blank:pointerdown', function(e, x, y)
+let panning = false;
+let mousePosition = { x: 0, y: 0 };
+paper.on('blank:pointerdown', function(e)
 {
 	panning = true;
 	mousePosition.x = e.pageX;
@@ -1046,7 +1041,7 @@ paper.on('blank:pointerdown', function(e, x, y)
 	$('body').css('cursor', 'move');
 	applyTextFields();
 });
-paper.on('cell:pointerdown', function(e, x, y)
+paper.on('cell:pointerdown', function()
 {
 	applyTextFields();
 });
@@ -1055,7 +1050,7 @@ $('#container').mousemove(function(e)
 {
 	if (panning)
 	{
-		var $this = $(this);
+		let $this = $(this);
 		$this.scrollLeft($this.scrollLeft() + mousePosition.x - e.pageX);
 		$this.scrollTop($this.scrollTop() + mousePosition.y - e.pageY);
 		mousePosition.x = e.pageX;
@@ -1063,7 +1058,7 @@ $('#container').mousemove(function(e)
 	}
 });
 
-$('#container').mouseup(function (e)
+$('#container').mouseup(function ()
 {
 	panning = false;
 	$('body').css('cursor', 'default');
@@ -1072,7 +1067,7 @@ $('#container').mouseup(function (e)
 function handleFiles(files)
 {
 	filename = files[0].name;
-	var fileReader = new FileReader();
+	let fileReader = new FileReader();
 	fileReader.onload = function(e)
 	{
 		graph.clear();
@@ -1114,21 +1109,21 @@ $('body').on('drop', function(e)
 $(window).on('keydown', function(event)
 {
 	// Catch Ctrl-S or key code 19 on Mac (Cmd-S)
-	if (((event.ctrlKey || event.metaKey) && String.fromCharCode(event.which).toLowerCase() == 's') || event.which == 19)
+	if (((event.ctrlKey || event.metaKey) && String.fromCharCode(event.which).toLowerCase() ==='s') || event.which === 19)
 	{
 		event.stopPropagation();
 		event.preventDefault();
 		save();
 		return false;
 	}
-	else if ((event.ctrlKey || event.metaKey) && String.fromCharCode(event.which).toLowerCase() == 'o')
+	else if ((event.ctrlKey || event.metaKey) && String.fromCharCode(event.which).toLowerCase() === 'o')
 	{
 		event.stopPropagation();
 		event.preventDefault();
 		load();
 		return false;
 	}
-	else if ((event.ctrlKey || event.metaKey) && String.fromCharCode(event.which).toLowerCase() == 'e')
+	else if ((event.ctrlKey || event.metaKey) && String.fromCharCode(event.which).toLowerCase() === 'e')
 	{
 		event.stopPropagation();
 		event.preventDefault();
@@ -1143,11 +1138,11 @@ $(window).on('keydown', function(event)
 $(window).resize(function()
 {
 	applyTextFields();
-	var $window = $(window);
-	var $container = $('#container');
+	let $window = $(window);
+	let $container = $('#container');
 		$container.height($window.innerHeight());
 		$container.width($window.innerWidth());
-		var $menu = $('#menu');
+		let $menu = $('#menu');
 		$menu.css('top', Math.max(0, (($window.height() - $menu.outerHeight()) / 2)) + 'px');
 		$menu.css('left', Math.max(0, (($window.width() - $menu.outerWidth()) / 2)) + 'px');
 		return this;
@@ -1155,9 +1150,9 @@ $(window).resize(function()
 
 function addFileEntry(name)
 {
-	var entry = $('<div>');
+	let entry = $('<div>');
 	entry.text(name);
-	var deleteButton = $('<button class="delete">-</button>');
+	let deleteButton = $('<button class="delete">-</button>');
 	entry.append(deleteButton);
 	$('#menu').append(entry);
 
@@ -1168,7 +1163,7 @@ function addFileEntry(name)
 		event.stopPropagation();
 	});
 
-	entry.on('click', function(event)
+	entry.on('click', function()
 	{
 		graph.clear();
 		graph.fromJSON(JSON.parse(localStorage[name]));
@@ -1179,7 +1174,7 @@ function addFileEntry(name)
 
 (function()
 {
-	for (var i = 0; i < localStorage.length; i++)
+	for (let i = 0; i < localStorage.length; i++)
 		addFileEntry(localStorage.key(i));
 })();
 
@@ -1214,7 +1209,7 @@ $('#paper').contextmenu(
 });
 
 ///AUTOLOAD IF URL HAS ? WILDCARD
-if (loadOnStart != null) {
+if (loadOnStart !== null) {
     loadOnStart += '.json';
     console.log(loadOnStart);
     graph.clear();
