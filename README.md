@@ -1,8 +1,3 @@
-# Hello! I'm currently working on a similar but more powerfull app which supports multiple dialogues with built in scripting, gdds, quest, etc. 
-# https://speechr.aboni.dev/
-
----
-
 # Talkit
 Web Based, Non-Linear Game Dialogue Editor.
 #
