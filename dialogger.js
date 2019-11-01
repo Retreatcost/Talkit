@@ -858,6 +858,18 @@ function gameData()
 				else
 					source.next = target ? target.id : null;
 			}
+
+
+			if (target.type === 'Blocker'){
+
+				if (!source.blockers){
+					source.blockers = [];
+				}
+
+				source.blockers.push(target.id);
+			}
+
+
 		}
 	}
 	return nodes;
