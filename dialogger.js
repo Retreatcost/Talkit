@@ -436,7 +436,8 @@ joint.shapes.dialogue.ChoiceView = joint.shapes.devs.ModelView.extend(
 		'<div class="node">',
 		'<span class="label"> </span>',
 		'<button class="delete">x</button>',
-        '<input type="choice" class="title" placeholder="Title" />',
+		'<input type="choice" class="title" placeholder="Title" />',
+		'<input type="text" class="priority" placeholder="priority" />',
         '<p> <textarea type="text" class="text" rows="4" cols="25" placeholder="Speech"></textarea></p>',
 		'</div>',
         		
@@ -457,6 +458,11 @@ joint.shapes.dialogue.ChoiceView = joint.shapes.devs.ModelView.extend(
         // This is an example of reacting on the input change and storing the input data in the cell model.
         this.$box.find('input.title').on('change', _.bind(function (evt) {
             this.model.set('title', $(evt.target).val());
+		}, this));
+
+		// This is an example of reacting on the input change and storing the input data in the cell model.
+		this.$box.find('input.priority').on('change', _.bind(function (evt) {
+			this.model.set('priority', $(evt.target).val());
 		}, this));
 		
 		// This is an example of reacting on the input change and storing the input data in the cell model.
@@ -488,6 +494,11 @@ joint.shapes.dialogue.ChoiceView = joint.shapes.devs.ModelView.extend(
         let titleField = this.$box.find('input.title');
         if (!titleField.is(':focus'))
 			titleField.val(this.model.get('title'));
+
+		// Example of updating the HTML with a data stored in the cell model.
+		let priorityField = this.$box.find('input.title');
+		if (!priorityField.is(':focus'))
+			priorityField.val(this.model.get('title'));
 
 		// Example of updating the HTML with a data stored in the cell model.
 		let textField = this.$box.find('textarea.text');
@@ -598,7 +609,8 @@ joint.shapes.dialogue.Choice = joint.shapes.devs.Model.extend(
 			inPorts: ['input'],
 			outPorts: ['output'],
 			title: '',
-            name: '',
+			priority: '',
+            text: '',
 		},
 		joint.shapes.dialogue.Base.prototype.defaults
 	),
@@ -808,7 +820,8 @@ function gameData()
 			}
 
 			else if (node.type === 'Choice') {
-			    node.text = cell.text;
+				node.text = cell.text;
+				node.priority = cell.priority;
 			    node.title = cell.title;
 			    node.next = null;
 			}
