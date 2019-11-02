@@ -437,7 +437,7 @@ joint.shapes.dialogue.ChoiceView = joint.shapes.devs.ModelView.extend(
 		'<span class="label"> </span>',
 		'<button class="delete">x</button>',
 		'<input type="choice" class="title" placeholder="Title" />',
-		'<input type="text" class="priority" placeholder="priority" />',
+		'<input type="text" class="priority" placeholder="Priority" />',
         '<p> <textarea type="text" class="text" rows="4" cols="25" placeholder="Speech"></textarea></p>',
 		'</div>',
         		
@@ -496,9 +496,9 @@ joint.shapes.dialogue.ChoiceView = joint.shapes.devs.ModelView.extend(
 			titleField.val(this.model.get('title'));
 
 		// Example of updating the HTML with a data stored in the cell model.
-		let priorityField = this.$box.find('input.title');
+		let priorityField = this.$box.find('input.priority');
 		if (!priorityField.is(':focus'))
-			priorityField.val(this.model.get('title'));
+			priorityField.val(this.model.get('priority'));
 
 		// Example of updating the HTML with a data stored in the cell model.
 		let textField = this.$box.find('textarea.text');
