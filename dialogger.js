@@ -163,8 +163,9 @@ joint.shapes.dialogue.BaseView = joint.shapes.devs.ModelView.extend(
 		'<div class="node">',
 		'<span class="label"></span>',
 		'<button class="delete">x</button>',
+		'<input type="text" class="title" placeholder="Title" />',
         '<input type="actor" class="actor" placeholder="Actor" />',
-        '<p> <textarea type="text" class="name" rows="4" cols="25" placeholder="Speech"></textarea></p>',
+        '<p> <textarea type="text" class="text" rows="4" cols="25" placeholder="Speech"></textarea></p>',
         '</div>',
 	].join(''),
 
@@ -184,9 +185,9 @@ joint.shapes.dialogue.BaseView = joint.shapes.devs.ModelView.extend(
 
 
 		// This is an example of reacting on the input change and storing the input data in the cell model.
-		this.$box.find('input.name').on('change', _.bind(function(evt)
+		this.$box.find('input.title').on('change', _.bind(function(evt)
 		{
-			this.model.set('name', $(evt.target).val());
+			this.model.set('title', $(evt.target).val());
 		}, this));
 
 	    // This is an example of reacting on the input change and storing the input data in the cell model.
@@ -196,8 +197,8 @@ joint.shapes.dialogue.BaseView = joint.shapes.devs.ModelView.extend(
 
 
 	    // This is an example of reacting on the input change and storing the input data in the cell model. TEXTAREA
-		this.$box.find('textarea.name').on('change', _.bind(function (evt) {
-		    this.model.set('name', $(evt.target).val());
+		this.$box.find('textarea.text').on('change', _.bind(function (evt) {
+		    this.model.set('text', $(evt.target).val());
 		}, this));
 
 		this.$box.find('.delete').on('click', _.bind(this.model.remove, this.model));
@@ -223,9 +224,9 @@ joint.shapes.dialogue.BaseView = joint.shapes.devs.ModelView.extend(
 	    let bbox = this.model.getBBox();
        
 		// Example of updating the HTML with a data stored in the cell model.
-		let nameField = this.$box.find('input.name');
-		if (!nameField.is(':focus'))
-		    nameField.val(this.model.get('name'));
+		let titleField = this.$box.find('input.title');
+		if (!titleField.is(':focus'))
+		    titleField.val(this.model.get('title'));
 
 	    // Example of updating the HTML with a data stored in the cell model.
 		let actorField = this.$box.find('input.actor');
@@ -233,9 +234,9 @@ joint.shapes.dialogue.BaseView = joint.shapes.devs.ModelView.extend(
 		    actorField.val(this.model.get('actor'));
 
 	    // Example of updating the HTML with a data stored in the cell model.
-		let textAreaField = this.$box.find('textarea.name');
+		let textAreaField = this.$box.find('textarea.text');
 		if (!textAreaField.is(':focus'))
-		    textAreaField.val(this.model.get('name'));
+		    textAreaField.val(this.model.get('text'));
 
 		let label = this.$box.find('.label');
 		let type = this.model.get('type').slice('dialogue.'.length);
@@ -436,7 +437,7 @@ joint.shapes.dialogue.ChoiceView = joint.shapes.devs.ModelView.extend(
 		'<span class="label"> </span>',
 		'<button class="delete">x</button>',
         '<input type="choice" class="title" placeholder="Title" />',
-        '<p> <textarea type="text" class="name" rows="4" cols="25" placeholder="Speech"></textarea></p>',
+        '<p> <textarea type="text" class="text" rows="4" cols="25" placeholder="Speech"></textarea></p>',
 		'</div>',
         		
 	].join(''),
@@ -454,14 +455,14 @@ joint.shapes.dialogue.ChoiceView = joint.shapes.devs.ModelView.extend(
         this.$box.find('idd').on('mousedown click', function (evt) { evt.stopPropagation(); });
 
         // This is an example of reacting on the input change and storing the input data in the cell model.
-        this.$box.find('textarea.name').on('change', _.bind(function (evt) {
-            this.model.set('name', $(evt.target).val());
-        }, this));
-
-        // This is an example of reacting on the input change and storing the input data in the cell model.
         this.$box.find('input.title').on('change', _.bind(function (evt) {
             this.model.set('title', $(evt.target).val());
-        }, this));
+		}, this));
+		
+		// This is an example of reacting on the input change and storing the input data in the cell model.
+		this.$box.find('textarea.text').on('change', _.bind(function (evt) {
+			this.model.set('text', $(evt.target).val());
+		}, this));
 
         this.$box.find('.delete').on('click', _.bind(this.model.remove, this.model));
         // Update the box position whenever the underlying model changes.
@@ -482,16 +483,16 @@ joint.shapes.dialogue.ChoiceView = joint.shapes.devs.ModelView.extend(
     updateBox: function () {
         // Set the position and dimension of the box so that it covers the JointJS element.
         let bbox = this.model.getBBox();
-        // Example of updating the HTML with a data stored in the cell model.
-        let nameField = this.$box.find('textarea.name');
-        if (!nameField.is(':focus'))
-            nameField.val(this.model.get('name'));
 
         // Example of updating the HTML with a data stored in the cell model.
         let titleField = this.$box.find('input.title');
         if (!titleField.is(':focus'))
 			titleField.val(this.model.get('title'));
 
+		// Example of updating the HTML with a data stored in the cell model.
+		let textField = this.$box.find('textarea.text');
+		if (!textField.is(':focus'))
+			textField.val(this.model.get('text'));
 
         let label = this.$box.find('.label');
         let type = this.model.get('type').slice('dialogue.'.length);
@@ -573,11 +574,11 @@ joint.shapes.dialogue.Text = joint.shapes.devs.Model.extend(
 			type: 'dialogue.Text',
 			inPorts: ['input'],
 			outPorts: ['output'],
+			title: '',
 			actor: '',
-			textarea: 'Start writing',
+			text: '',
 			attrs:
 			{
-			  
 				'.outPorts circle': { unlimitedConnections: ['dialogue.Choice'], }
 			},
 		},
@@ -790,7 +791,6 @@ function gameData()
 				node.variable = cell.name;
 				node.value = cell.value;
 				node.next = null;
-                
 			}
 
 			else if (node.type === 'Blocker')
@@ -804,21 +804,21 @@ function gameData()
 			{
 				node.trigger = cell.trigger;
 				node.dataset = cell.dataset;
-				node.next = null;                
+				node.next = null;
 			}
 
 			else if (node.type === 'Choice') {
-			    node.name = cell.name;
+			    node.text = cell.text;
 			    node.title = cell.title;
 			    node.next = null;
-
 			}
 			else
 			{
 			    node.actor = cell.actor;
-				node.name = cell.name;
+				node.text = cell.text;
 				node.next = null;
 			}
+
 			nodes.push(node);
 			nodesByID[cell.id] = node;
 			cellsByID[cell.id] = cell;
