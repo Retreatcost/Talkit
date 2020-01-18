@@ -35,44 +35,44 @@ let allowableConnections =
 	['dialogue.Text', 'dialogue.Set'],
 	['dialogue.Text', 'dialogue.Branch'],
 	['dialogue.Text', 'dialogue.Blocker'],
-	['dialogue.Text', 'dialogue.Trigger'],
+	['dialogue.Text', 'dialogue.Event'],
 	['dialogue.Node', 'dialogue.Text'],
 	['dialogue.Node', 'dialogue.Node'],
 	['dialogue.Node', 'dialogue.Choice'],
 	['dialogue.Node', 'dialogue.Set'],
 	['dialogue.Node', 'dialogue.Branch'],
 	['dialogue.Node', 'dialogue.Blocker'],
-	['dialogue.Node', 'dialogue.Trigger'],
+	['dialogue.Node', 'dialogue.Event'],
 	['dialogue.Choice', 'dialogue.Text'],
 	['dialogue.Choice', 'dialogue.Node'],
 	['dialogue.Choice', 'dialogue.Set'],
 	['dialogue.Choice', 'dialogue.Branch'],
 	['dialogue.Choice', 'dialogue.Blocker'],
-	['dialogue.Choice', 'dialogue.Trigger'],
+	['dialogue.Choice', 'dialogue.Event'],
 	['dialogue.Set', 'dialogue.Text'],
 	['dialogue.Set', 'dialogue.Node'],
 	['dialogue.Set', 'dialogue.Set'],
 	['dialogue.Set', 'dialogue.Branch'],
 	['dialogue.Set', 'dialogue.Blocker'],
-	['dialogue.Set', 'dialogue.Trigger'],
+	['dialogue.Set', 'dialogue.Event'],
 	['dialogue.Branch', 'dialogue.Text'],
 	['dialogue.Branch', 'dialogue.Node'],
 	['dialogue.Branch', 'dialogue.Set'],
 	['dialogue.Branch', 'dialogue.Branch'],
 	['dialogue.Branch', 'dialogue.Blocker'],
-	['dialogue.Branch', 'dialogue.Trigger'],
+	['dialogue.Branch', 'dialogue.Event'],
 	['dialogue.Blocker', 'dialogue.Text'],
 	['dialogue.Blocker', 'dialogue.Node'],
 	['dialogue.Blocker', 'dialogue.Choice'],
 	['dialogue.Blocker', 'dialogue.Set'],
 	['dialogue.Blocker', 'dialogue.Branch'],
-	['dialogue.Blocker', 'dialogue.Trigger'],
-	['dialogue.Trigger', 'dialogue.Text'],
-	['dialogue.Trigger', 'dialogue.Node'],
-	['dialogue.Trigger', 'dialogue.Choice'],
-	['dialogue.Trigger', 'dialogue.Set'],
-	['dialogue.Trigger', 'dialogue.Branch'],
-	['dialogue.Trigger', 'dialogue.Blocker'],
+	['dialogue.Blocker', 'dialogue.Event'],
+	['dialogue.Event', 'dialogue.Text'],
+	['dialogue.Event', 'dialogue.Node'],
+	['dialogue.Event', 'dialogue.Choice'],
+	['dialogue.Event', 'dialogue.Set'],
+	['dialogue.Event', 'dialogue.Branch'],
+	['dialogue.Event', 'dialogue.Blocker'],
 ];
 
 function validateConnection(cellViewS, magnetS, cellViewT, magnetT)
@@ -340,14 +340,14 @@ joint.shapes.dialogue.BlockerView = joint.shapes.devs.ModelView.extend(
 	},
 });
 
-joint.shapes.dialogue.TriggerView = joint.shapes.devs.ModelView.extend(
+joint.shapes.dialogue.EventView = joint.shapes.devs.ModelView.extend(
 {
 	template:
 	[
 		'<div class="node">',
 		'<span class="label"></span>',
 		'<button class="delete">x</button>',
-		'<input type="text" class="trigger" placeholder="Trigger" />',
+		'<input type="text" class="event" placeholder="Event" />',
 		'<p> <textarea type="text" class="dataset" rows="1" cols="25" placeholder="Dataset"></textarea></p>',
 		'</div>',
 	].join(''),
@@ -368,9 +368,9 @@ joint.shapes.dialogue.TriggerView = joint.shapes.devs.ModelView.extend(
 
 
 		// This is an example of reacting on the input change and storing the input data in the cell model.
-		this.$box.find('input.trigger').on('change', _.bind(function(evt)
+		this.$box.find('input.event').on('change', _.bind(function(evt)
 		{
-			this.model.set('trigger', $(evt.target).val());
+			this.model.set('event', $(evt.target).val());
 		}, this));
 
 		// This is an example of reacting on the input change and storing the input data in the cell model. TEXTAREA
@@ -401,9 +401,9 @@ joint.shapes.dialogue.TriggerView = joint.shapes.devs.ModelView.extend(
 		let bbox = this.model.getBBox();
 		
 		// Example of updating the HTML with a data stored in the cell model.
-		let nameField = this.$box.find('input.trigger');
+		let nameField = this.$box.find('input.event');
 		if (!nameField.is(':focus'))
-			nameField.val(this.model.get('trigger'));
+			nameField.val(this.model.get('event'));
 
 		// Example of updating the HTML with a data stored in the cell model.
 		let actorField = this.$box.find('input.dataset');
@@ -557,15 +557,15 @@ joint.shapes.dialogue.Blocker = joint.shapes.devs.Model.extend(
 	),
 });
 
-joint.shapes.dialogue.Trigger = joint.shapes.devs.Model.extend(
+joint.shapes.dialogue.Event = joint.shapes.devs.Model.extend(
 {
 	defaults: joint.util.deepSupplement
 	(
 		{
-			type: 'dialogue.Trigger',
+			type: 'dialogue.Event',
 			inPorts: ['input'],
 			outPorts: ['output'],
-			trigger:'',
+			event:'',
 			dataset:'',
 			attrs:
 			{
@@ -812,9 +812,9 @@ function gameData()
 				node.next = null;                
 			}
 
-			else if (node.type === 'Trigger')
+			else if (node.type === 'Event')
 			{
-				node.trigger = cell.trigger;
+				node.event = cell.event;
 				node.dataset = cell.dataset;
 				node.next = null;
 			}
@@ -1222,7 +1222,7 @@ $('#paper').contextmenu(
 		{ text: 'Set', alias: '1-4', action: add(joint.shapes.dialogue.Set) },
 		{ text: 'Node', alias: '1-5', action: add(joint.shapes.dialogue.Node) },
 		{ text: 'Blocker', alias: '1-6', action: add(joint.shapes.dialogue.Blocker) },
-		{ text: 'Trigger', alias: '1-7', action: add(joint.shapes.dialogue.Trigger) },
+		{ text: 'Event', alias: '1-7', action: add(joint.shapes.dialogue.Event) },
 		{ type: 'splitLine' },
 		{ text: 'Save', alias: '2-1', action: save },
 		{ text: 'Load', alias: '2-2', action: load },
