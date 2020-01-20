@@ -67,6 +67,7 @@ let allowableConnections =
 	['dialogue.Blocker', 'dialogue.Set'],
 	['dialogue.Blocker', 'dialogue.Branch'],
 	['dialogue.Blocker', 'dialogue.Event'],
+	['dialogue.Blocker', 'dialogue.Blocker'],
 	['dialogue.Event', 'dialogue.Text'],
 	['dialogue.Event', 'dialogue.Node'],
 	['dialogue.Event', 'dialogue.Choice'],
@@ -258,8 +259,9 @@ joint.shapes.dialogue.BlockerView = joint.shapes.devs.ModelView.extend(
 		'<div class="node">',
 		'<span class="label"></span>',
 		'<button class="delete">x</button>',
-		'<input type="text" class="quest" placeholder="Quest" />',
-		'<p> <textarea type="text" class="condition" rows="1" cols="25" placeholder="Condition"></textarea></p>',
+		'<input type="text" class="blockertype" placeholder="Type" />',
+		'<input type="text" class="name" placeholder="Name" />',
+		'<p> <textarea type="text" class="state" rows="1" cols="25" placeholder="State"></textarea></p>',
 		'</div>',
 	].join(''),
 
@@ -279,20 +281,21 @@ joint.shapes.dialogue.BlockerView = joint.shapes.devs.ModelView.extend(
 
 
 		// This is an example of reacting on the input change and storing the input data in the cell model.
-		this.$box.find('input.condition').on('change', _.bind(function(evt)
+		this.$box.find('input.blockertype').on('change', _.bind(function(evt)
 		{
-			this.model.set('condition', $(evt.target).val());
+			this.model.set('blockertype', $(evt.target).val());
 		}, this));
 
 		// This is an example of reacting on the input change and storing the input data in the cell model.
-		this.$box.find('input.quest').on('change', _.bind(function (evt) {
-			this.model.set('quest', $(evt.target).val());
+		this.$box.find('input.name').on('change', _.bind(function(evt)
+		{
+			this.model.set('name', $(evt.target).val());
 		}, this));
 
 
 		// This is an example of reacting on the input change and storing the input data in the cell model. TEXTAREA
-		this.$box.find('textarea.condition').on('change', _.bind(function (evt) {
-			this.model.set('condition', $(evt.target).val());
+		this.$box.find('textarea.state').on('change', _.bind(function (evt) {
+			this.model.set('state', $(evt.target).val());
 		}, this));
 
 		this.$box.find('.delete').on('click', _.bind(this.model.remove, this.model));
@@ -318,14 +321,19 @@ joint.shapes.dialogue.BlockerView = joint.shapes.devs.ModelView.extend(
 		let bbox = this.model.getBBox();
 		
 		// Example of updating the HTML with a data stored in the cell model.
-		let questField = this.$box.find('input.quest');
-		if (!questField.is(':focus'))
-			questField.val(this.model.get('quest'));
+		let typeField = this.$box.find('input.blockertype');
+		if (!typeField.is(':focus'))
+			typeField.val(this.model.get('blockertype'));
 
 		// Example of updating the HTML with a data stored in the cell model.
-		let conditionField = this.$box.find('textarea.condition');
-		if (!conditionField.is(':focus'))
-			conditionField.val(this.model.get('condition'));
+		let nameField = this.$box.find('input.name');
+		if (!nameField.is(':focus'))
+			nameField.val(this.model.get('name'));
+
+		// Example of updating the HTML with a data stored in the cell model.
+		let stateField = this.$box.find('textarea.state');
+		if (!stateField.is(':focus'))
+			stateField.val(this.model.get('state'));
 
 		let label = this.$box.find('.label');
 		let type = this.model.get('type').slice('dialogue.'.length);
@@ -546,8 +554,9 @@ joint.shapes.dialogue.Blocker = joint.shapes.devs.Model.extend(
 			type: 'dialogue.Blocker',
 			inPorts: ['input'],
 			outPorts: ['output'],
-			quest:'',
-			condition:'',
+			state:'',
+			blockertype:'',
+			name:'',
 			attrs:
 			{
 				'.outPorts circle': { unlimitedConnections: ['dialogue.Choice'], }
@@ -807,8 +816,9 @@ function gameData()
 
 			else if (node.type === 'Blocker')
 			{
-				node.quest = cell.quest;
-				node.condition = cell.condition;
+				node.state = cell.state;
+				node.blockertype = cell.blockertype;
+				node.name = cell.name;
 				node.next = null;                
 			}
 
@@ -861,15 +871,20 @@ function gameData()
 				}
 				else if ((source.type === 'Text' || source.type === 'Node') && target && target.type === 'Choice')
 				{
-					if (!source.choices)
-					{
+					if (!source.choices){
 						source.choices = [];
 						delete source.next;
 					}
 					source.choices.push(target.id);
 				}
-				else
-					source.next = target ? target.id : null;
+				else {
+
+					if (source.next) {
+						source.next.push(target ? target.id : null);
+					} else {
+						source.next = [target ? target.id : null];
+					}
+				}					
 			}
 
 
