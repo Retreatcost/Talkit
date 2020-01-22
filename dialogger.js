@@ -559,7 +559,7 @@ joint.shapes.dialogue.Blocker = joint.shapes.devs.Model.extend(
 			name:'',
 			attrs:
 			{
-				'.outPorts circle': { unlimitedConnections: ['dialogue.Choice'], }
+				'.outPorts circle': { unlimitedConnections: ['dialogue.Choice', 'dialogue.Blocker'], }
 			},
 		},
 		joint.shapes.dialogue.Base.prototype.defaults
