@@ -223,6 +223,16 @@ Node styles
 	color: #ea6;
 }
 
+.node .label.Blocker
+{
+	color: rgb(238, 102, 102);
+}
+
+.node .label.Event
+{
+	color: rgb(102, 184, 238);
+}
+
 button
 {
 	float: right;

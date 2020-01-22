@@ -144,7 +144,7 @@ joint.shapes.dialogue.Base = joint.shapes.devs.Model.extend(
 	(
 		{
 			type: 'dialogue.Base',
-			size: { width: 250, height: 135 },
+			size: { width: 250, height: 145 },
 			name: '',
 			attrs:
 			{
@@ -166,7 +166,7 @@ joint.shapes.dialogue.BaseView = joint.shapes.devs.ModelView.extend(
 		'<button class="delete">x</button>',
 		'<input type="text" class="title" placeholder="Title" />',
         '<input type="actor" class="actor" placeholder="Actor" />',
-        '<p> <textarea type="text" class="text" rows="4" cols="25" placeholder="Speech"></textarea></p>',
+        '<p><br><textarea type="text" class="text" rows="4" cols="27" placeholder="Speech"></textarea></p>',
         '</div>',
 	].join(''),
 
@@ -261,7 +261,7 @@ joint.shapes.dialogue.BlockerView = joint.shapes.devs.ModelView.extend(
 		'<button class="delete">x</button>',
 		'<input type="text" class="blockertype" placeholder="Type" />',
 		'<input type="text" class="name" placeholder="Name" />',
-		'<p> <textarea type="text" class="state" rows="1" cols="25" placeholder="State"></textarea></p>',
+		'<p> <textarea type="text" class="state" rows="1" cols="27" placeholder="State"></textarea></p>',
 		'</div>',
 	].join(''),
 
@@ -446,7 +446,7 @@ joint.shapes.dialogue.ChoiceView = joint.shapes.devs.ModelView.extend(
 		'<button class="delete">x</button>',
 		'<input type="choice" class="title" placeholder="Title" />',
 		'<input type="text" class="priority" placeholder="Priority" />',
-        '<p> <textarea type="text" class="text" rows="4" cols="25" placeholder="Speech"></textarea></p>',
+        '<p><textarea type="text" class="text" rows="4" cols="27" placeholder="Speech"></textarea></p>',
 		'</div>',
         		
 	].join(''),
@@ -552,6 +552,7 @@ joint.shapes.dialogue.Blocker = joint.shapes.devs.Model.extend(
 	(
 		{
 			type: 'dialogue.Blocker',
+			size: { width: 250, height: 115 },
 			inPorts: ['input'],
 			outPorts: ['output'],
 			state:'',
@@ -572,6 +573,7 @@ joint.shapes.dialogue.Event = joint.shapes.devs.Model.extend(
 	(
 		{
 			type: 'dialogue.Event',
+			size: { width: 250, height: 85 },
 			inPorts: ['input'],
 			outPorts: ['output'],
 			event:'',
@@ -584,7 +586,6 @@ joint.shapes.dialogue.Event = joint.shapes.devs.Model.extend(
 		joint.shapes.dialogue.Base.prototype.defaults
 	),
 });
-// joint.shapes.dialogue.BlockerView = joint.shapes.dialogue.BlockerView;
 
 joint.shapes.dialogue.Text = joint.shapes.devs.Model.extend(
 {
@@ -613,7 +614,7 @@ joint.shapes.dialogue.Choice = joint.shapes.devs.Model.extend(
 	defaults: joint.util.deepSupplement
 	(
 		{
-		    size: { width: 250, height: 135 },
+		    size: { width: 250, height: 140 },
 			type: 'dialogue.Choice',
 			inPorts: ['input'],
 			outPorts: ['output'],
@@ -1060,15 +1061,14 @@ function clear()
 let paper = new joint.dia.Paper(
 {
 	el: $('#paper'),
-	width: 16000,
-	height: 8000,
+	width: 32000,
+	height: 16000,
 	model: graph,
 	gridSize: 16,
 	defaultLink: defaultLink,
 	validateConnection: validateConnection,
 	validateMagnet: validateMagnet,
 	snapLinks: { radius: 75 }
-
 });
 
 let panning = false;
