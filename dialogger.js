@@ -538,7 +538,7 @@ joint.shapes.dialogue.Node = joint.shapes.devs.Model.extend(
 			outPorts: ['output'],
 			attrs:
 			{
-				'.outPorts circle': { unlimitedConnections: ['dialogue.Choice'], }
+				'.outPorts circle': { unlimitedConnections: ['dialogue.Choice', 'dialogue.Blocker'], }
 			},
 		},
 		joint.shapes.dialogue.Base.prototype.defaults
